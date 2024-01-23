@@ -32,7 +32,7 @@ axios
     console.log("success", JSON.stringify(response.data, null, 2));
   })
   .catch((error) => console.log("error", error.response.data));
- */
+
 axios
   .delete(`${apiUrl}/65ae5e8f721b79ef2a802a87`, {
     headers: {
@@ -43,6 +43,8 @@ axios
     console.log("success", response.data);
   })
   .catch((error) => console.log("error", error.message));
+  */
+
 // Users DB testing
 user = {
   username: "Yoyi28",
@@ -50,14 +52,14 @@ user = {
   name: "George",
   blogs: ["65a16e98418af474427f3b76"],
 };
-/*
+
 axios
   .post(usersUrl, user)
   .then((response) => {
     console.log("success!");
   })
   .catch((error) => console.log("error"));
-
+/*
 axios
   .get(usersUrl)
   .then((response) => {
