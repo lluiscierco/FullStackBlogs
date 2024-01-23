@@ -1,25 +1,35 @@
 const mongoose = require("mongoose");
+const uniqueValidator = require("mongoose-unique-validator");
 
-const userSchema = new mongoose.Schema({
-  username: String,
-  passwordHash: String,
+const userSchema = mongoose.Schema({
+  username: {
+    type: String,
+    required: true,
+    minlength: 3,
+    unique: true,
+  },
   name: String,
+  passwordHash: String,
   blogs: [
     {
-      type: mongoose.Schema.Types.ObjectId, // id
-      ref: "Blog", // reference (link) to table Blog
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Blog",
     },
   ],
 });
 
-// Change toJSON method so it doesnt return id and version when fetching from DB
+userSchema.plugin(uniqueValidator);
+
 userSchema.set("toJSON", {
   transform: (document, returnedObject) => {
-    returnedObject.id = returnedObject._id.toString(); //convert to str as is object
+    returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
     delete returnedObject.__v;
+    // the passwordHash should not be revealed
     delete returnedObject.passwordHash;
   },
 });
 
-module.exports = mongoose.model("User", userSchema);
+const User = mongoose.model("User", userSchema);
+
+module.exports = User;

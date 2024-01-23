@@ -1,15 +1,16 @@
 const bcrypt = require("bcrypt");
-const usersRouter = require("express").Router();
+const router = require("express").Router();
 const User = require("../models/user");
-const logger = require("../utils/logger");
 
-usersRouter.get("/", async (request, response) => {
-  const users = await User.find({}).populate("blogs");
-  response.json(users);
-});
+router.post("/", async (request, response) => {
+  const { username, name, password } = request.body;
 
-usersRouter.post("/", async (request, response) => {
-  const { username, name, password, blogs } = request.body;
+  if (!password || password.length < 3) {
+    return response.status(400).json({
+      error: "`password` is shorter than the minimum allowed length (3)",
+    });
+  }
+
   const saltRounds = 10;
   const passwordHash = await bcrypt.hash(password, saltRounds);
 
@@ -17,30 +18,22 @@ usersRouter.post("/", async (request, response) => {
     username,
     name,
     passwordHash,
-    blogs,
   });
 
   const savedUser = await user.save();
-  logger.info("saved!", savedUser);
+
   response.status(201).json(savedUser);
 });
-/*
-usersRouter.delete("/:id", (request, response) => {
-  User.findByIdAndRemove(request.params.id).then((result) => {
-    response.status(204).end();
+
+router.get("/", async (request, response) => {
+  const users = await User.find({}).populate("blogs", {
+    title: 1,
+    author: 1,
+    url: 1,
+    likes: 1,
   });
+
+  response.json(users);
 });
 
-usersRouter.put("/:_id", (request, response) => {
-  const body = request.body;
-
-
-  console.log("here ID:", request.params._id);
-  User.findByIdAndUpdate(request.params._id, body, { new: true }) //return new doc
-    .then((updateduser) => {
-      console.log(updateduser);
-      response.json(updateduser);
-    });
-});
-  */
-module.exports = usersRouter;
+module.exports = router;
