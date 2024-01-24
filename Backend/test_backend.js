@@ -47,10 +47,10 @@ axios
 
 // Users DB testing
 user = {
-  username: "Yoyi28",
-  password: "secret.19",
-  name: "George",
-  blogs: ["65a16e98418af474427f3b76"],
+  username: "test",
+  password: "test",
+  name: "GeorgethTest",
+  blogs: [],
 };
 
 axios

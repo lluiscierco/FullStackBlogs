@@ -9,21 +9,35 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
 
+  // Use Effects
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      //noteService.setToken(user.token)
+    }
+  }, []);
+
+  // Functions
+  const handleLogin = async (event) => {
+    event.preventDefault(); // Prevents the default form submission behavior
+    console.log("Submit");
+    const userAuth = await loginService.login({ username, password });
+    setUser(userAuth);
+    window.localStorage.setItem("loggedUser", JSON.stringify(user));
+  };
+
+  // Render
   if (!user) {
     return (
       <div>
         <h2>Login to the application</h2>
-        <form
-          onSubmit={(event) => {
-            event.preventDefault(); // Prevents the default form submission behavior
-            console.log("Submit");
-            loginService.login({ username, password });
-          }}
-        >
+        <form onSubmit={handleLogin}>
           <input
             value={username}
             onChange={(event) => setUsername(event.target.value)}
@@ -39,7 +53,16 @@ const App = () => {
   }
   return (
     <div>
-      <h2>blogss</h2>
+      <h2>blogs</h2>
+      <p> The user logged is: {user.name} </p>
+      <button
+        onClick={() => {
+          window.localStorage.removeItem("loggedUser");
+          setUser("");
+        }}
+      >
+        Log Out
+      </button>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
