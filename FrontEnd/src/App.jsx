@@ -9,6 +9,10 @@ const App = () => {
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
 
+  const [title, setTitle] = useState("");
+  const [author, setAuthor] = useState("");
+  const [url, setUrl] = useState("");
+
   // Use Effects
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -16,9 +20,11 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedUser");
+    console.log("log user:", loggedUserJSON);
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
+      blogService.setToken(user.token);
       //noteService.setToken(user.token)
     }
   }, []);
@@ -29,10 +35,25 @@ const App = () => {
     console.log("Submit");
     const userAuth = await loginService.login({ username, password });
     setUser(userAuth);
-    window.localStorage.setItem("loggedUser", JSON.stringify(user));
+    blogService.setToken(userAuth.token);
+    window.localStorage.setItem("loggedUser", JSON.stringify(userAuth));
+  };
+
+  const handleBlogSubmit = async (event) => {
+    event.preventDefault();
+    console.log("tring to post:", { title, author, url });
+    try {
+      await blogService.postBlog({ title, author, url });
+      const updatedBlogs = await blogService.getAll();
+      setBlogs(updatedBlogs);
+      // Optionally, you can clear the input fields here if needed.
+    } catch (error) {
+      // Handle error if needed
+    }
   };
 
   // Render
+  console.log(user);
   if (!user) {
     return (
       <div>
@@ -66,6 +87,28 @@ const App = () => {
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
+      <h2>Create new blog</h2>
+      <form onSubmit={handleBlogSubmit}>
+        <div>
+          <label htmlFor="title">Title: </label>
+          <input
+            value={title}
+            onChange={(event) => setTitle(event.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="Author">Author: </label>
+          <input
+            value={author}
+            onChange={(event) => setAuthor(event.target.value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="Url">Url: </label>
+          <input value={url} onChange={(event) => setUrl(event.target.value)} />
+        </div>
+        <button type="Submit">Post</button>
+      </form>
     </div>
   );
 };
