@@ -12,6 +12,7 @@ const App = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
+  const [notification, setNotification] = useState("");
 
   // Use Effects
   useEffect(() => {
@@ -20,7 +21,6 @@ const App = () => {
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedUser");
-    console.log("log user:", loggedUserJSON);
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
@@ -32,11 +32,17 @@ const App = () => {
   // Functions
   const handleLogin = async (event) => {
     event.preventDefault(); // Prevents the default form submission behavior
-    console.log("Submit");
-    const userAuth = await loginService.login({ username, password });
-    setUser(userAuth);
-    blogService.setToken(userAuth.token);
-    window.localStorage.setItem("loggedUser", JSON.stringify(userAuth));
+    try {
+      const userAuth = await loginService.login({ username, password });
+      setUser(userAuth);
+      blogService.setToken(userAuth.token);
+      window.localStorage.setItem("loggedUser", JSON.stringify(userAuth));
+      showNotification("User logged in successfuly", true);
+      setUsername("");
+    } catch {
+      showNotification("User credentials incorrect", false);
+    }
+    setPassword("");
   };
 
   const handleBlogSubmit = async (event) => {
@@ -46,17 +52,37 @@ const App = () => {
       await blogService.postBlog({ title, author, url });
       const updatedBlogs = await blogService.getAll();
       setBlogs(updatedBlogs);
-      // Optionally, you can clear the input fields here if needed.
+      setTitle("");
+      setAuthor("");
+      setUrl("");
+      showNotification("Blog added successfully!", true);
     } catch (error) {
-      // Handle error if needed
+      showNotification("Blog is missing information", false);
     }
   };
 
+  const showNotification = (message, isSuccess = true) => {
+    setNotification({ message, isSuccess });
+    setTimeout(() => {
+      setNotification(null);
+    }, 5000); // Clear the notification after 5 seconds
+  };
+
   // Render
-  console.log(user);
   if (!user) {
     return (
       <div>
+        {notification && (
+          <div
+            style={{
+              backgroundColor: notification.isSuccess ? "green" : "red",
+              padding: "10px",
+              color: "white",
+            }}
+          >
+            {notification.message}
+          </div>
+        )}
         <h2>Login to the application</h2>
         <form onSubmit={handleLogin}>
           <input
@@ -64,6 +90,7 @@ const App = () => {
             onChange={(event) => setUsername(event.target.value)}
           />
           <input
+            type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
           />
@@ -74,6 +101,17 @@ const App = () => {
   }
   return (
     <div>
+      {notification && (
+        <div
+          style={{
+            backgroundColor: notification.isSuccess ? "green" : "red",
+            padding: "10px",
+            color: "white",
+          }}
+        >
+          {notification.message}
+        </div>
+      )}
       <h2>blogs</h2>
       <p> The user logged is: {user.name} </p>
       <button
