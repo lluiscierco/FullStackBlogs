@@ -10,10 +10,6 @@ const App = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [user, setUser] = useState("");
-
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [url, setUrl] = useState("");
   const [notification, setNotification] = useState("");
 
   // Use Effects
@@ -127,16 +123,8 @@ const App = () => {
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
-      <Togglable buttonLabel="Create new blog">
-        <NewBlog
-          handleBlogSubmit={handleBlogSubmit}
-          title={title}
-          setTitle={setTitle}
-          author={author}
-          setAuthor={setAuthor}
-          url={url}
-          setUrl={setUrl}
-        />
+      <Togglable buttonShowLabel="Create new blog" buttonHideLabel="Cancel">
+        <NewBlog handleBlogSubmit={handleBlogSubmit} />
       </Togglable>
     </div>
   );
