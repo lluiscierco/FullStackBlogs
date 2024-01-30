@@ -43,8 +43,8 @@ const App = () => {
     setPassword("");
   };
 
-  const handleBlogSubmit = async (event) => {
-    event.preventDefault();
+  const handleBlogSubmit = async ({ title, author, url }) => {
+    //event.preventDefault();
     console.log("tring to post:", { title, author, url });
     try {
       await blogService.postBlog({ title, author, url });

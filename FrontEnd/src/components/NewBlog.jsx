@@ -5,10 +5,19 @@ const NewBlog = ({ handleBlogSubmit }) => {
   const [author, setAuthor] = useState("");
   const [url, setUrl] = useState("");
 
+  // Functions
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    handleBlogSubmit({ title, author, url });
+    setTitle("");
+    setAuthor("");
+    setUrl("");
+  };
+
   return (
     <div>
       <h2>Create new blog</h2>
-      <form onSubmit={handleBlogSubmit}>
+      <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="title">Title: </label>
           <input

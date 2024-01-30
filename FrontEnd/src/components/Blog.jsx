@@ -42,7 +42,8 @@ const Blog = ({ blog }) => {
         <div>{blog.title}</div>
         <div>{blog.url}</div>
         <div>{blog.author}</div>
-        <div>{blog.likes}</div>
+        <div>likes: {blog.likes}</div>
+        <div>{blog.user.username}</div>
         <button>Like</button>
         <button onClick={toggleVisibility} style={buttonStyle}>
           Hide
