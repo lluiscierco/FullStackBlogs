@@ -20,4 +20,16 @@ const postBlog = async (newBlog) => {
   return response.data;
 };
 
-export default { getAll, postBlog, setToken };
+const addLike = async (likedBlog) => {
+  const config = {
+    headers: { Authorization: token },
+  };
+  const response = await axios.put(
+    `/api/blogs/${likedBlog.id}`,
+    likedBlog,
+    config,
+  );
+  return response.data;
+};
+
+export default { setToken, getAll, postBlog, addLike };

@@ -50,12 +50,21 @@ const App = () => {
       await blogService.postBlog({ title, author, url });
       const updatedBlogs = await blogService.getAll();
       setBlogs(updatedBlogs);
-      setTitle("");
-      setAuthor("");
-      setUrl("");
       showNotification("Blog added successfully!", true);
     } catch (error) {
       showNotification("Blog is missing information", false);
+    }
+  };
+
+  const addLike = async (likedBlog) => {
+    try {
+      likedBlog.likes = likedBlog.likes + 1;
+      await blogService.addLike(likedBlog);
+      const updatedBlogs = await blogService.getAll();
+      setBlogs(updatedBlogs);
+      showNotification("Blog liked successfully!", true);
+    } catch (error) {
+      showNotification("Ups! Something went wrong... try again later", false);
     }
   };
 
@@ -121,7 +130,7 @@ const App = () => {
         Log Out
       </button>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} addLike={addLike} />
       ))}
       <Togglable buttonShowLabel="Create new blog" buttonHideLabel="Cancel">
         <NewBlog handleBlogSubmit={handleBlogSubmit} />
