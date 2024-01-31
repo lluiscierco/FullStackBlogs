@@ -14,7 +14,14 @@ const App = () => {
 
   // Use Effects
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    // Use effects cant have the async, the async must be in a func inside the use effect but not itself
+    const fetchBlogs = async () => {
+      const fetchedBlogs = await blogService.getAll();
+      // Sort the blogs by likes in descending order
+      const sortedBlogs = fetchedBlogs.sort((a, b) => b.likes - a.likes);
+      setBlogs(sortedBlogs);
+    };
+    fetchBlogs();
   }, []);
 
   useEffect(() => {
@@ -49,7 +56,7 @@ const App = () => {
     try {
       await blogService.postBlog({ title, author, url });
       const updatedBlogs = await blogService.getAll();
-      setBlogs(updatedBlogs);
+      setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes));
       showNotification("Blog added successfully!", true);
     } catch (error) {
       showNotification("Blog is missing information", false);
@@ -61,7 +68,7 @@ const App = () => {
       likedBlog.likes = likedBlog.likes + 1;
       await blogService.addLike(likedBlog);
       const updatedBlogs = await blogService.getAll();
-      setBlogs(updatedBlogs);
+      setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes));
       showNotification("Blog liked successfully!", true);
     } catch (error) {
       showNotification("Ups! Something went wrong... try again later", false);
@@ -75,7 +82,7 @@ const App = () => {
       try {
         await blogService.deleteBlog(blogToDelete);
         const updatedBlogs = await blogService.getAll();
-        setBlogs(updatedBlogs);
+        setBlogs(updatedBlogs.sort((a, b) => b.likes - a.likes));
         showNotification("Blog deleted successfully!", true);
       } catch (error) {
         showNotification("Ups! Something went wrong... try again later", false);
