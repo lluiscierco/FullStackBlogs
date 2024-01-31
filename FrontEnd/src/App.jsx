@@ -68,6 +68,21 @@ const App = () => {
     }
   };
 
+  const deleteBlog = async (blogToDelete) => {
+    if (
+      window.confirm("Are you sure you want to permanently delete the blog?")
+    ) {
+      try {
+        await blogService.deleteBlog(blogToDelete);
+        const updatedBlogs = await blogService.getAll();
+        setBlogs(updatedBlogs);
+        showNotification("Blog deleted successfully!", true);
+      } catch (error) {
+        showNotification("Ups! Something went wrong... try again later", false);
+      }
+    }
+  };
+
   const showNotification = (message, isSuccess = true) => {
     setNotification({ message, isSuccess });
     setTimeout(() => {
@@ -130,7 +145,12 @@ const App = () => {
         Log Out
       </button>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} addLike={addLike} />
+        <Blog
+          key={blog.id}
+          blog={blog}
+          addLike={addLike}
+          deleteBlog={deleteBlog}
+        />
       ))}
       <Togglable buttonShowLabel="Create new blog" buttonHideLabel="Cancel">
         <NewBlog handleBlogSubmit={handleBlogSubmit} />

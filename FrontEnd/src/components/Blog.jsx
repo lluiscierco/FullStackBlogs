@@ -1,5 +1,5 @@
 import { useState } from "react";
-const Blog = ({ blog, addLike }) => {
+const Blog = ({ blog, addLike, deleteBlog }) => {
   // State variables
   const [visible, setVisible] = useState(false);
 
@@ -31,6 +31,11 @@ const Blog = ({ blog, addLike }) => {
     addLike(blog);
   };
 
+  const handleRemove = (event) => {
+    event.preventDefault();
+    deleteBlog(blog);
+  };
+
   // Render
   if (!visible) {
     return (
@@ -52,6 +57,9 @@ const Blog = ({ blog, addLike }) => {
         <button onClick={handleLike}>Like</button>
         <button onClick={toggleVisibility} style={buttonStyle}>
           Hide
+        </button>
+        <button onClick={handleRemove} style={buttonStyle}>
+          Remove
         </button>
       </div>
     );
