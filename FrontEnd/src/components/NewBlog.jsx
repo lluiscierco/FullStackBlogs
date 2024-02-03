@@ -21,20 +21,26 @@ const NewBlog = ({ handleBlogSubmit }) => {
         <div>
           <label htmlFor="title">Title: </label>
           <input
+            id="title"
             value={title}
             onChange={(event) => setTitle(event.target.value)}
           />
         </div>
         <div>
-          <label htmlFor="Author">Author: </label>
+          <label htmlFor="author">Author: </label>
           <input
+            id="author"
             value={author}
             onChange={(event) => setAuthor(event.target.value)}
           />
         </div>
         <div>
-          <label htmlFor="Url">Url: </label>
-          <input value={url} onChange={(event) => setUrl(event.target.value)} />
+          <label htmlFor="url">Url: </label>
+          <input
+            id="url"
+            value={url}
+            onChange={(event) => setUrl(event.target.value)}
+          />
         </div>
         <button type="Submit">Post</button>
       </form>
